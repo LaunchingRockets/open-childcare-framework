@@ -5,3 +5,5 @@
 export * from './lib/open-childcare-framework.service';
 export * from './lib/open-childcare-framework.component';
 export * from './lib/open-childcare-framework.module';
+
+export * from './api/index';
