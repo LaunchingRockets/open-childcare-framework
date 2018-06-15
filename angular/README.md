@@ -1,7 +1,5 @@
 # Angular
 
-This is a test app for the framework, whose library code you will find under projects/open-childcare-framework. 
-
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.7.
 
 ## Development server

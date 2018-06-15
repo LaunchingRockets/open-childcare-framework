@@ -1,40 +1,13 @@
-import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { Configuration } from './configuration';
+import * as api from './api/apis';
+import * as angular from 'angular';
 
-import { AdminService } from './api/admin.service';
-import { AuthenticationService } from './api/authentication.service';
-import { ClassroomService } from './api/classroom.service';
-import { CrecheService } from './api/creche.service';
-import { FinanceService } from './api/finance.service';
-import { SalesService } from './api/sales.service';
-import { UserService } from './api/user.service';
+const apiModule = angular.module('api', [])
+.service('AdminApi', api.AdminApi)
+.service('AuthenticationApi', api.AuthenticationApi)
+.service('ClassroomApi', api.ClassroomApi)
+.service('CrecheApi', api.CrecheApi)
+.service('FinanceApi', api.FinanceApi)
+.service('SalesApi', api.SalesApi)
+.service('UserApi', api.UserApi)
 
-@NgModule({
-  imports:      [ CommonModule, HttpClientModule ],
-  declarations: [],
-  exports:      [],
-  providers: [
-    AdminService,
-    AuthenticationService,
-    ClassroomService,
-    CrecheService,
-    FinanceService,
-    SalesService,
-    UserService ]
-})
-export class ApiModule {
-    public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders {
-        return {
-            ngModule: ApiModule,
-            providers: [ { provide: Configuration, useFactory: configurationFactory } ]
-        }
-    }
-
-    constructor( @Optional() @SkipSelf() parentModule: ApiModule) {
-        if (parentModule) {
-            throw new Error('ApiModule is already loaded. Import your base AppModule only.');
-        }
-    }
-}
+export default apiModule;
