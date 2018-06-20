@@ -1,0 +1,23 @@
+I've had this issue once before but cannot remember for the life of me why it changes
+generating in creche-desktop develop, generates them correctly with $
+just tried then
+could just change template to handle both cases
+```const path = this.basePath + '{{{path}}}'{{#pathParams}}
+        .replace('${' + '{{baseName}}' + '}', String({{paramName}})){{/pathParams}};```
+
+to
+
+```const path = this.basePath + '{{{path}}}'{{#pathParams}}
+        .replace('${' + '{{baseName}}' + '}', String({{paramName}}))
+        .replace('{' + '{{baseName}}' + '}', String({{paramName}})){{/pathParams}};```
+result:
+
+```const path = this.basePath + '/${user}/${locationId}/finance/transactions'
+        .replace('${' + 'user' + '}', String(user))
+        .replace('{' + 'user' + '}', String(user))
+        .replace('${' + 'locationId' + '}', String(locationId))
+        .replace('{' + 'locationId' + '}', String(locationId));```
+:joy:
+
+Eamon O'Tuathail [6:05 PM]
+OK, I'll try that, looks good

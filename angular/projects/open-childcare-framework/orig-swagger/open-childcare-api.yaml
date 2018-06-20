@@ -1,0 +1,4453 @@
+swagger: "2.0"
+info:
+  description: "This is Vivos Creche API"
+  version: 1.0.0
+  title: Creche YAML
+  termsOfService: "https://www.vivos.me/terms/"
+  contact:
+    email: "smulhall79@gmail.com"
+host: __HOST__
+basePath: /v1
+tags:
+  - name: user
+    description: Everything about your Users
+    externalDocs:
+      description: Find out more about Vivos
+      url: "http://www.vivos.me"
+schemes:
+  - http
+securityDefinitions:
+  APIKeyHeader:
+    type: apiKey
+    in: header
+    name: Authorization
+#  creche_auth:
+#    type: oauth2
+#    authorizationUrl: https://creche.vivos.me/api/oauth/dialog
+#    flow: implicit
+#    scopes:
+#      "write:users": modify users in the system
+#      "read:users": read your users
+# To apply Basic auth to the whole API:
+security:
+  - APIKeyHeader: []
+paths:
+  /register:
+    post:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: register
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Register"
+      responses:
+        "200":
+          description: User profile info
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: User not found
+  /reset/password:
+    post:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: resetPassword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Register"
+      responses:
+        "200":
+          description: User profile info
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: User not found
+  /login-by-code/{type}:
+    post:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: loginByCode
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: Login request
+          required: true
+          schema:
+            $ref: "#/definitions/Login"
+      responses:
+        "200":
+          description: User profile info
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: User not found
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error'
+        "403":
+          description: User not authorized
+          schema:
+            $ref: '#/definitions/Error'
+  /login:
+    post:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: login
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Login request
+          required: true
+          schema:
+            $ref: "#/definitions/Login"
+      responses:
+        "200":
+          description: User profile info
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: User not found
+  /{user}/user/roles:
+    post:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: addUserRoles
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: User profile info
+        "404":
+          description: User not found
+  /{user}/{locationId}/generate-access/{type}/{id}:
+    get:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: generateAccess
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          type: string
+          description: Generate access code
+          required: true
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: type
+          type: string
+          required: true
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: method
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Code for access
+          schema:
+            $ref: '#/definitions/Code'
+        "404":
+          description: User not found
+  /{user}/user-info/{id}:
+    get:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: getUserInfo
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          type: string
+          required: true
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: User Info
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: User not found
+  /{user}/send-access/{type}:
+    post:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: sendAccess
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          type: string
+          required: true
+        - in: path
+          name: type
+          type: string
+          required: true
+        - in: body
+          name: GuardianList
+          required: true
+          schema:
+            $ref: '#/definitions/GuardianList'
+      responses:
+        "200":
+          description: Code for access
+          schema:
+            $ref: '#/definitions/Code'
+        "404":
+          description: User not found
+  /logout:
+    post:
+      tags:
+        - authentication
+      summary: Authentication API
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: logout
+      responses:
+        "204":
+          description: User logged out
+        "404":
+          description: User not found
+  /{user}:
+    get:
+      tags:
+        - user
+      summary: Return user profile info
+      x-swagger-router-controller: UserController
+      description: ""
+      operationId: getInfo
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - name: user
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: User profile info
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: User not found
+    put:
+      tags:
+        - user
+      summary: Update an existing user
+      description: ""
+      operationId: updateUser
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: User object that needs to be added to the system
+          required: false
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "405":
+          description: Validation exception
+  /{user}/creche:
+    get:
+      tags:
+        - creche
+      x-swagger-router-controller: CrecheController
+      operationId: getCreche
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of children
+          schema:
+            $ref: '#/definitions/Creche'
+  /{user}/locations/{crecheId}:
+    get:
+      tags:
+        - creche
+      x-swagger-router-controller: CrecheController
+      operationId: getLocations
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: crecheId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of children
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Location'
+  /{user}/groups/{locationId}:
+    get:
+      tags:
+        - creche
+      x-swagger-router-controller: CrecheController
+      operationId: getGroups
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of children
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Group'
+  /{user}/group/{locationId}/{groupId}:
+    delete:
+      tags:
+        - creche
+      x-swagger-router-controller: CrecheController
+      operationId: deleteGroup
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: groupId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Deletion successfull
+  /{user}/group:
+    post:
+      tags:
+        - creche
+      x-swagger-router-controller: CrecheController
+      operationId: addGroup
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Group"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Group just created
+          schema:
+            $ref: '#/definitions/Group'
+  /{user}/staff-times/{location}:
+    get:
+      tags:
+        - creche
+      summary: Returns staff timesheet for today
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getStaffTimes
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Staff Time sheet
+          schema:
+            $ref: '#/definitions/TimeSheet'
+  /{user}/{locationId}/children-guardian:
+    get:
+      tags:
+        - creche
+      summary: Returns list of children
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getChildrenByGuardian
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of children
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TimeSheet'
+  /{user}/children-guardian/{guardianId}:
+    get:
+      tags:
+        - creche
+      summary: Returns list of children
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getChildrenByGuardianId
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: guardianId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of children
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Child'
+  /{user}/families/{locationId}:
+    get:
+      tags:
+        - creche
+      summary: Returns list of families in the system
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getFamilies
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of families
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Family'
+  /{user}/children/{location}:
+    get:
+      tags:
+        - creche
+      summary: Returns list of children
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getChildren
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          type: integer
+          format: int32
+          required: true
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of children
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Child'
+  /{user}/child/{id}:
+    get:
+      tags:
+        - creche
+      summary: "Get child in the  system"
+      description: "get Child from the system"
+      x-swagger-router-controller: CrecheController
+      operationId: getChild
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ChildRequest"
+  /{user}/child:
+    post:
+      tags:
+        - creche
+      summary: "Add child to system"
+      description: "add Child to system"
+      x-swagger-router-controller: CrecheController
+      operationId: addChild
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/ChildRequest"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ChildRequest"
+    put:
+      tags:
+        - creche
+      summary: "Update child in the system"
+      description: "Update Child in the system"
+      x-swagger-router-controller: CrecheController
+      operationId: updateChild
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/ChildRequest"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ChildRequest"
+  /{user}/child/schedule/{childId}:
+    get:
+      tags:
+        - creche
+      summary: "Get Child schedule from the system"
+      description: "Get Child schedule from the system"
+      x-swagger-router-controller: CrecheController
+      operationId: getChildSchedule
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: childId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ChildSchedule"
+  /{user}/child/schedules/{location}:
+    get:
+      tags:
+        - creche
+      summary: "Get Child schedules from system"
+      description: "Get Child schedules from system"
+      x-swagger-router-controller: SchedulesController
+      operationId: getChildSchedules
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: childIds
+          required: true
+          type: array
+          items:
+            type: integer
+            format: int32
+          collectionFormat: csv
+        - in: query
+          name: startDate
+          required: true
+          type: string
+        - in: query
+          name: endDate
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+  /{user}/schedules/{locationId}:
+    get:
+      tags:
+        - creche
+      summary: "Get the list of schedule types from system"
+      description: "GGet the list of schedule types from system"
+      x-swagger-router-controller: SchedulesController
+      operationId: getScheduleTypes
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ScheduleAndFees"
+  /{user}/child/schedules/calculate/{locationId}/{groupId}:
+    get:
+      tags:
+        - creche
+      summary: "Get Child schedules from system"
+      description: "Get Child schedules from system"
+      x-swagger-router-controller: SchedulesController
+      operationId: getChildCalculations
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: groupId
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: startDate
+          required: true
+          type: string
+        - in: query
+          name: endDate
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ChildCalculations"
+  /{user}/child/schedule:
+    post:
+      tags:
+        - creche
+      summary: "Add Child schedule to system"
+      description: "Add Child schedule to system"
+      x-swagger-router-controller: CrecheController
+      operationId: addChildSchedule
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref:  "#/definitions/ChildSchedule"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ChildSchedule"
+    put:
+      tags:
+        - creche
+      summary: "Update Child schedule to system"
+      description: "Update Child schedule to system"
+      x-swagger-router-controller: CrecheController
+      operationId: updateChildSchedule
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref:  "#/definitions/ChildSchedule"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ChildSchedule"
+  /{user}/staff/remove/{id}:
+    post:
+      tags:
+        - creche
+      summary: "Remove Staff from system"
+      description: "remove Staff from system"
+      x-swagger-router-controller: CrecheController
+      operationId: removeStaff
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+      responses:
+        200:
+          description: OK
+  /{user}/child/remove/{id}:
+    post:
+      tags:
+        - creche
+      summary: "Remove child from system"
+      description: "remove Child from system"
+      x-swagger-router-controller: CrecheController
+      operationId: removeChild
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+      responses:
+        200:
+          description: OK
+  /{user}/addStaff:
+    post:
+      tags:
+        - creche
+      summary: "Add staff member to system"
+      description: "add Staff to system"
+      x-swagger-router-controller: CrecheController
+      operationId: addStaff
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/StaffRequest"
+      responses:
+        200:
+          description: OK
+  /{user}/child/sign-in-out/{location}/{childId}:
+    post:
+      tags:
+        - creche
+      summary: Signs in or out a child
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: signInOutChild
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: childId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: "Sign in/out info"
+          required: true
+          schema:
+            $ref: "#/definitions/TimeSheetEntry"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: signed in
+  /{user}/child/reset-times/{childId}/{date}:
+    delete:
+      tags:
+        - creche
+      summary: Resets times for children
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: resetChildTimes
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: childId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: date
+          description: "Sign in/out info"
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: reset
+  /{user}/staff/reset-times/{staffId}/{date}:
+    delete:
+      tags:
+        - creche
+      summary: Resets times for staff
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: resetStaffTimes
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: staffId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: date
+          description: "Sign in/out info"
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: reset
+  /{user}/child/times/{location}/{date}:
+    get:
+      tags:
+        - creche
+      summary: Signs in or out a child
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: childTimes
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: date
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: signed in
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TimeSheet'
+  /{user}/staff/times/{location}/{date}:
+    get:
+      tags:
+        - creche
+      summary: Signs in or out a child
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: staffTimes
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: date
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: signed in
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TimeSheet'
+  /{user}/staff/payroll/{location}:
+    get:
+      tags:
+        - creche
+      summary: Gets staff payroll numbers
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getStaffTimesAndPayroll
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: startDate
+          required: true
+          type: string
+        - in: query
+          name: endDate
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: signed in
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StaffPayroll'
+  /{user}/staff/payroll/v2/{location}:
+    get:
+      tags:
+        - creche
+      summary: Gets staff payroll numbers
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getStaffTimesAndPayrollV2
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: startDate
+          required: true
+          type: string
+        - in: query
+          name: endDate
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: signed in
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StaffPayroll'
+  /{user}/staff/worked-shift/{id}:
+    put:
+      tags:
+        - creche
+      summary: Updates a worked staff shift
+      description: Updates a worked staff shift
+      x-swagger-router-controller: SchedulesController
+      operationId: updateWorkedShift
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: shift
+          required: true
+          schema:
+            $ref: '#/definitions/WorkedShift'
+      responses:
+        200:
+          description: Staff Shift returned
+          schema:
+            $ref: '#/definitions/WorkedShift'
+  /{user}/staff/shift/{id}:
+    get:
+      tags:
+        - creche
+      summary: Get a staff shift from the system
+      description: Get staff shift from the system. This returns the planned shift not the acutal worked one
+      x-swagger-router-controller: SchedulesController
+      operationId: getStaffShift
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: Staff Shift returned
+          schema:
+            $ref: '#/definitions/Shift'
+    put:
+      tags:
+        - creche
+      summary: Update staff shift to the system
+      description: Update staff shift to the system
+      x-swagger-router-controller: SchedulesController
+      operationId: updateStaffShift
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: shift
+          required: true
+          schema:
+            $ref: '#/definitions/Shift'
+      responses:
+        201:
+          description: Staff Shift created
+          schema:
+            $ref: '#/definitions/Shift'
+    delete:
+      tags:
+        - creche
+      summary: Delete staff shift from the system
+      description: Delete staff shift from the system. This shift is a planned shift not the actual worked one
+      x-swagger-router-controller: SchedulesController
+      operationId: deleteStaffShift
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        202:
+          description: Staff Shift deleted
+  /{user}/staff/shift:
+    post:
+      tags:
+        - creche
+      summary: Add staff shift to the system
+      description: Add staff shift to the system
+      x-swagger-router-controller: SchedulesController
+      operationId: addStaffShift
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: shift
+          required: true
+          schema:
+            $ref: '#/definitions/Shift'
+      responses:
+        201:
+          description: Staff Shift created
+          schema:
+            $ref: '#/definitions/Shift'
+  /{user}/staff/rota/{locationId}:
+    get:
+      tags:
+        - creche
+      summary: Get rota from the system for a given location
+      description: Get staff rota from the system for a given location
+      x-swagger-router-controller: SchedulesController
+      operationId: getStaffRota
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: startDate
+          required: true
+          type: string
+        - in: query
+          name: endDate
+          required: true
+          type: string
+      responses:
+        200:
+          description: The Staff Rota for the specified date range
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Shift'
+  /{user}/{locationId}/staff/shifts:
+    get:
+      tags:
+        - creche
+      summary: Get Default shifts from the system
+      description: Get Default shifts from the system
+      x-swagger-router-controller: SchedulesController
+      operationId: getDefaultStaffShifts
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: The Staff Rota for the specified date range
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Shift'
+  /{user}/staff-times/{staffId}/{location}/{date}:
+    get:
+      tags:
+        - creche
+      summary: Return times for a given staff
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getStaffTimesById
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: staffId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: date
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: signed in
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TimeSheet'
+  /{user}/child-times/{childId}/{location}/{date}:
+    get:
+      tags:
+        - creche
+      summary: Returns times for a given child
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getChildTimes
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: childId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: date
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: signed in
+          schema:
+            $ref: '#/definitions/TimeSheet'
+  /{user}/staff/sign-in-out/{location}/{staffId}:
+    post:
+      tags:
+        - creche
+      summary: Signs in or out a staff
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: signInOutStaff
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: location
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: staffId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: body
+          description: "Sign in/out info"
+          required: true
+          schema:
+            $ref: "#/definitions/TimeSheetEntry"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: list of times
+  /{user}/guardians:
+    get:
+      tags:
+        - creche
+      summary: Returns list of guardians
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getGuardians
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of children
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Guardian'
+  /{user}/staff:
+    get:
+      tags:
+        - creche
+      summary: Returns list of guardians
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getStaff
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of children
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Staff'
+  /{user}/finance/transactions:
+    get:
+      tags:
+        - finance
+      summary: Returns list financial transactions
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: getTransactions
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: query
+          name: startDate
+          required: true
+          type: string
+        - in: query
+          name: endDate
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of financial Transactions
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Transaction'
+  /{user}/finance/transaction:
+    post:
+      tags:
+        - finance
+      summary: Updates a financial transaction
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: addTransaction
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: transaction
+          required: true
+          schema:
+            $ref: "#/definitions/Transaction"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Transaction not found
+        "200":
+          description: Financial Transaction created
+          schema:
+            $ref: '#/definitions/Transaction'
+  /{user}/finance/transaction/{id}:
+    put:
+      tags:
+        - finance
+      summary: Updates a financial transaction
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: updateTransaction
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: transaction
+          required: true
+          schema:
+            $ref: "#/definitions/Transaction"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Transaction not found
+        "200":
+          description: Financial Transaction updated
+          schema:
+            $ref: '#/definitions/Transaction'
+    delete:
+      tags:
+        - finance
+      summary: Deletes a financial transaction
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: deleteTransaction
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Transaction not found
+        "200":
+          description: Financial Transaction deleted
+  /{user}/finance/invoices:
+    get:
+      tags:
+        - finance
+      summary: Returns list of invoices
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: getInvoices
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: query
+          name: startDate
+          required: true
+          type: string
+        - in: query
+          name: endDate
+          required: true
+          type: string
+        - in: query
+          name: paid
+          required: false
+          type: boolean
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: List of invoices
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Invoice'
+  /{user}/finance/invoice:
+    post:
+      tags:
+        - finance
+      summary: Raises invoice
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: createInvoice
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: body
+          name: invoice
+          required: true
+          schema:
+            $ref: '#/definitions/Invoice'
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+          schema:
+            $ref: '#/definitions/Invoice'
+  /{user}/finance/invoice/{id}:
+    get:
+      tags:
+        - finance
+      summary: Raises invoice
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: getInvoice
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+          schema:
+            $ref: '#/definitions/Invoice'
+    put:
+      tags:
+        - finance
+      summary: Raises invoice
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: updateInvoice
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: invoice
+          required: true
+          schema:
+            $ref: '#/definitions/Invoice'
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+          schema:
+            $ref: '#/definitions/Invoice'
+    delete:
+      tags:
+        - finance
+      summary: Raises invoice
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: deleteInvoice
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+  /{user}/{locationId}/transaction/import:
+    post:
+      tags:
+        - finance
+      summary: uploads a csv in inserts bank transactions
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: importTransactions
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: user
+          in: path
+          description: User ID
+          required: true
+          type: string
+        - name: locationId
+          in: path
+          description: location
+          required: true
+          type: integer
+          format: int32
+        - name: additionalMetadata
+          in: formData
+          description: Additional data to pass to server
+          required: false
+          type: string
+        - name: file
+          in: formData
+          description: file to upload
+          required: false
+          type: file
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/FileResponse'
+  /{user}/{locationId}/messages/{id}:
+    get:
+      tags:
+        - finance
+      summary: Get location message
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getLocationMessage
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+          schema:
+            $ref: '#/definitions/LocationMessage'
+    delete:
+      tags:
+        - finance
+      summary: Delete location message
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: deleteLocationMessage
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Message deleted
+    put:
+      tags:
+        - finance
+      summary: Update location message
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: updateLocationMessage
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/LocationMessage"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+          schema:
+            $ref: '#/definitions/LocationMessage'
+  /{user}/{locationId}/messages:
+    get:
+      tags:
+        - finance
+      summary: Get location messages
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: getAllLocationMessages
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/LocationMessage'
+    post:
+      tags:
+        - finance
+      summary: Get location message
+      x-swagger-router-controller: CrecheController
+      description: ""
+      operationId: addLocationMessage
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/LocationMessage"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+          schema:
+            $ref: '#/definitions/LocationMessage'
+  /{user}/{locationId}/school/{id}:
+    get:
+      tags:
+        - admin
+      summary: Get location message
+      x-swagger-router-controller: AdminController
+      description: ""
+      operationId: getSchool
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: School
+          schema:
+            $ref: '#/definitions/School'
+    delete:
+      tags:
+        - admin
+      summary: Delete location message
+      x-swagger-router-controller: AdminController
+      description: ""
+      operationId: deleteSchool
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: School deleted
+    put:
+      tags:
+        - admin
+      summary: Update school
+      x-swagger-router-controller: AdminController
+      description: ""
+      operationId: updateSchool
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          type: integer
+          format: int32
+          required: true
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/School"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Rasied invoice
+          schema:
+            $ref: '#/definitions/LocationMessage'
+  /{user}/{locationId}/school:
+    get:
+      tags:
+        - admin
+      summary: get school
+      x-swagger-router-controller: AdminController
+      description: ""
+      operationId: getSchools
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Schools
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/School'
+    post:
+      tags:
+        - admin
+      summary: Add school
+      x-swagger-router-controller: AdminController
+      description: ""
+      operationId: addSchool
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/School"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: School
+          schema:
+            $ref: '#/definitions/School'
+  /{user}/{locationId}/group-capacity:
+    get:
+      tags:
+        - sales
+      summary: get group capacity
+      x-swagger-router-controller: SchedulesController
+      description: ""
+      operationId: getGroupCapacities
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: GroupCapacity
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GroupCapacity'
+  /{user}/{locationId}/group-capacity/{groupId}:
+    get:
+      tags:
+        - sales
+      summary: get group capacity
+      x-swagger-router-controller: SchedulesController
+      description: ""
+      operationId: getGroupCapacity
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: groupId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: GroupCapacity
+          schema:
+            $ref: '#/definitions/GroupCapacity'
+  /{user}/{locationId}/class:
+    get:
+      tags:
+        - classroom
+      summary: get child data entries
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getChildEntries
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: children
+          required: true
+          type: array
+          items:
+            type: integer
+            format: int64
+          collectionFormat: csv
+        - in: query
+          name: startTime
+          required: false
+          type: string
+        - in: query
+          name: endTime
+          required: false
+          type: string
+        - in: query
+          name: type
+          required: false
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entries
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChildClassData'
+    post:
+      tags:
+        - classroom
+      summary: Add Child Data Entry
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: addChildEntry
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/ChildClassData"
+        - in: query
+          name: children
+          required: true
+          type: array
+          items:
+            type: integer
+            format: int64
+          collectionFormat: csv
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entry
+          schema:
+            $ref: '#/definitions/ChildClassData'
+  /{user}/{locationId}/class/{id}:
+    get:
+      tags:
+        - classroom
+      summary: get child data entries
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getChildEntry
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entries
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChildClassData'
+    delete:
+      tags:
+        - classroom
+      summary: delete child data entry
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: deleteChildEntry
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "201":
+          description: Child Class Data Entry deleted
+    put:
+      tags:
+        - classroom
+      summary: Add Child Data Entry
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: updateChildEntry
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/ChildClassData"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entry
+          schema:
+            $ref: '#/definitions/ChildClassData'
+
+  /{user}/{locationId}/observations/group:
+    get:
+      tags:
+        - classroom
+      summary: get observations
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getGroupObservations
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: startTime
+          required: false
+          type: string
+        - in: query
+          name: endTime
+          required: false
+          type: string
+        - in: query
+          name: groupId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entries
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Observation'
+
+  /{user}/{locationId}/observations:
+    get:
+      tags:
+        - classroom
+      summary: get observations
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getChildObservations
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: startTime
+          required: false
+          type: string
+        - in: query
+          name: endTime
+          required: false
+          type: string
+        - in: query
+          name: children
+          required: false
+          type: array
+          items:
+            type: integer
+            format: int64
+          collectionFormat: csv
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entries
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Observation'
+    post:
+      tags:
+        - classroom
+      summary: Add Observation
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: addObservations
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/Observation"
+        - in: query
+          name: children
+          required: false
+          type: array
+          items:
+            type: integer
+            format: int64
+          collectionFormat: csv
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "201":
+          description: Child Class Data Entry
+  /{user}/{locationId}/observations/{id}:
+    get:
+      tags:
+        - classroom
+      summary: get Observation
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getObservation
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Observations
+          schema:
+            $ref: '#/definitions/Observation'
+    delete:
+      tags:
+        - classroom
+      summary: Delete Observation
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: deleteObservation
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "201":
+          description: Child Class Data Entry deleted
+    put:
+      tags:
+        - classroom
+      summary: Update Observation
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: updateObservation
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/Observation"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entry
+          schema:
+            $ref: '#/definitions/Observation'
+
+# Aister tags
+
+  /{user}/{locationId}/observation-tags:
+    get:
+      tags:
+        - classroom
+      summary: get Aister tags
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getTags
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: type
+          required: true
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entries
+          schema:
+            $ref: '#/definitions/AistearFramework'
+# Menu
+
+  /{user}/{locationId}/menus:
+    get:
+      tags:
+        - classroom
+      summary: get menu
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getMenus
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entries
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Menu'
+    post:
+      tags:
+        - classroom
+      summary: Add Menu
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: addMenu
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/Menu"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Child Class Data Entry
+          schema:
+            $ref: '#/definitions/Menu'
+  /{user}/{locationId}/menu/{id}:
+    get:
+      tags:
+        - classroom
+      summary: get Menu
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getMenuById
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Menu
+          schema:
+            $ref: '#/definitions/Menu'
+    delete:
+      tags:
+        - classroom
+      summary: Delete Menu
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: deleteMenu
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "201":
+          description: Menu entry deleted
+    put:
+      tags:
+        - classroom
+      summary: Update Menu
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: updateMenu
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: menu
+          required: true
+          schema:
+            $ref: "#/definitions/Menu"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Menu
+          schema:
+            $ref: '#/definitions/Menu'
+
+# Meal
+
+  /{user}/{locationId}/meals:
+    get:
+      tags:
+        - classroom
+      summary: Get Meals
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getMeals
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Meals not found
+        "200":
+          description: Meal
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Meal'
+    post:
+      tags:
+        - classroom
+      summary: Add Meal
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: addMeal
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: message
+          required: true
+          schema:
+            $ref: "#/definitions/Meal"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Meal
+          schema:
+            $ref: '#/definitions/Meal'
+  /{user}/{locationId}/meal/{id}:
+    delete:
+      tags:
+        - classroom
+      summary: Delete Meal
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: deleteMeal
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "201":
+          description: Meal entry deleted
+    put:
+      tags:
+        - classroom
+      summary: Update Meal
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: updateMeal
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: meal
+          required: true
+          schema:
+            $ref: "#/definitions/Meal"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Meal
+          schema:
+            $ref: '#/definitions/Meal'
+
+# Ingredients
+
+  /{user}/{locationId}/ingredients:
+    get:
+      tags:
+        - classroom
+      summary: Get Ingredients
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: getIngredients
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Ingredients not found
+        "200":
+          description: Ingredient
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Ingredient'
+    post:
+      tags:
+        - classroom
+      summary: Add Ingredient
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: addIngredient
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: ingredient
+          required: true
+          schema:
+            $ref: "#/definitions/Ingredient"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Ingredient
+          schema:
+            $ref: '#/definitions/Ingredient'
+  /{user}/{locationId}/suppliers:
+    get:
+      tags:
+        - classroom
+      summary: Get Suppliers
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: getSuppliers
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Ingredients not found
+        "200":
+          description: Ingredient
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Supplier'
+    post:
+      tags:
+        - classroom
+      summary: Add Supplier
+      x-swagger-router-controller: FinanceController
+      description: ""
+      operationId: addSupplier
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: supplier
+          required: true
+          schema:
+            $ref: "#/definitions/Supplier"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Ingredient
+          schema:
+            $ref: '#/definitions/Supplier'
+  /{user}/{locationId}/ingredients/{id}:
+    delete:
+      tags:
+        - classroom
+      summary: Delete Ingredient
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: deleteIngredient
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "201":
+          description: Ingredient entry deleted
+    put:
+      tags:
+        - classroom
+      summary: Update Ingredient
+      x-swagger-router-controller: ClassController
+      description: ""
+      operationId: updateIngredient
+      consumes:
+        - application/json
+      security:
+        - APIKeyHeader: []
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: user
+          required: true
+          type: string
+        - in: path
+          name: locationId
+          required: true
+          type: integer
+          format: int32
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: ingredient
+          required: true
+          schema:
+            $ref: "#/definitions/Ingredient"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "200":
+          description: Ingredient
+          schema:
+            $ref: '#/definitions/Ingredient'
+
+  /{user}/{locationId}/uploadFile:
+    post:
+      tags:
+        - admin
+      summary: uploads an image
+      x-swagger-router-controller: FileUploadController
+      description: ""
+      operationId: uploadFile
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: user
+          in: path
+          description: User ID
+          required: true
+          type: string
+        - name: locationId
+          in: path
+          description: location
+          required: true
+          type: integer
+          format: int32
+        - name: additionalMetadata
+          in: formData
+          description: Additional data to pass to server
+          required: false
+          type: string
+        - name: file
+          in: formData
+          description: file to upload
+          required: false
+          type: file
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/FileResponse'
+definitions:
+  FileResponse:
+    type: object
+    properties:
+      url:
+        type: string
+  Login:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  Register:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      token:
+        type: string
+      name:
+        type: string
+      roles:
+        type: array
+        items:
+          type: string
+  Code:
+    type: object
+    properties:
+      code:
+        type: string
+      messages:
+        type: array
+        items:
+          type: string
+  ChildRequest:
+    type: object
+    properties:
+      child:
+        $ref: '#/definitions/Child'
+      guardians:
+        type: array
+        items:
+          $ref: '#/definitions/Guardian'
+      groups:
+        type: array
+        items:
+          $ref: '#/definitions/Group'
+      location:
+        $ref: '#/definitions/Location'
+  StaffRequest:
+    type: object
+    properties:
+      staff:
+        $ref: '#/definitions/Staff'
+      group:
+        $ref: '#/definitions/Group'
+      location:
+        $ref: '#/definitions/Location'
+  TimeSheetType:
+    type: string
+    enum:
+      - IN
+      - OUT
+      - SCHOOL_IN
+      - SCHOOL_OUT
+      - FIRST_BREAK_START
+      - FIRST_BREAK_STOP
+      - LUNCH_START
+      - LUNCH_STOP
+      - SECOND_BREAK_START
+      - SECOND_BREAK_STOP
+      - ABSENT
+  TimeSheetEntry:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      notes:
+        type: string
+      type:
+        $ref: '#/definitions/TimeSheetType'
+      time:
+        type: string
+        example: "2016-5-10 00:09:05"
+      locationId:
+        type: integer
+        format: int32
+      default:
+        type: boolean
+        example: false
+      userId:
+        type: integer
+        format: int64
+      device:
+        type: string
+        example: desktop
+  TimeSheet:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      date:
+        type: string
+      startTime:
+        type: string
+      endTime:
+        type: string
+      calcs:
+        $ref: '#/definitions/TimeCalcs'
+      group:
+        type: string
+      location:
+        type: integer
+        format: int32
+      gender:
+        type: string
+        enum:
+          - MALE
+          - FEMALE
+      attendance:
+        type: array
+        items:
+          $ref: '#/definitions/TimeSheetEntry'
+  StaffPayroll:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      hourlyRate:
+        type: number
+      totalHours:
+        type: number
+      totalPaidHours:
+        type: number
+      totalPaidBreaks:
+        type: number
+      totalUnPaidBreaks:
+        type: number
+      totalMoney:
+        type: number
+      startDate:
+        type: string
+      endDate:
+        type: string
+      timeSheets:
+        type: array
+        items:
+          $ref: '#/definitions/TimeSheet'
+  TimeCalcs:
+    type: object
+    properties:
+      totalPaidMinutes:
+        type: integer
+        format: int32
+      totalMinutes:
+        type: integer
+        format: int32
+      unpaidBreaks:
+        type: integer
+        format: int32
+      paidBreaks:
+        type: integer
+        format: int32
+      error:
+        type: boolean
+  Menu:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        example: 1
+      name:
+        type: string
+        example: Example Menu
+      type:
+        $ref: '#/definitions/MealType'
+        example: LUNCH
+      startDate:
+        type: string
+        example: 2018-01-01
+      endDate:
+        type: string
+        example: 2018-02-01
+      reuse:
+        type: boolean
+        example: false
+      meals:
+        type: array
+        items:
+          type: integer
+  Ingredient:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        example: 1
+      name:
+        type: string
+        example: Onion
+      type:
+        $ref: '#/definitions/IngredientType'
+        example: VEGETABLE
+      checked:
+        type: boolean
+        example: false
+      usedIn:
+        type: array
+        items:
+          $ref: '#/definitions/MealType'
+  Drink:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      mealType:
+        $ref: '#/definitions/MealType'
+  Meal:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        example: 1
+      name:
+        type: string
+        example: Curry
+      type:
+        $ref: '#/definitions/MealType'
+        example: LUNCH
+      ingredients:
+        type: array
+        items:
+          type: integer
+  IngredientType:
+    type: string
+    enum:
+      - PROTEIN
+      - DAIRY
+      - FRUIT
+      - VEGETABLE
+      - CARBOHYDRATES
+      - OTHER
+  MealType:
+    type: string
+    enum:
+      - BREAKFAST
+      - LUNCH
+      - DINNER
+      - SNACKS
+  Family:
+    properties:
+      fees:
+        type: object
+        properties:
+          total:
+            type: number
+          frequency:
+            type: string
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/Child'
+      guardians:
+        type: array
+        items:
+          $ref: '#/definitions/Guardian'
+  Child:
+    allOf:
+      - $ref: '#/definitions/Person'
+      - type: object
+        properties:
+          group:
+            type: string
+            example: babies
+          collectFromSchool:
+            type: boolean
+            example: false
+          dropToSchool:
+            type: boolean
+            example: false
+  Guardian:
+    allOf:
+      - $ref: '#/definitions/Person'
+      - type: object
+        properties:
+          email:
+            type: string
+            example: test@test.com
+          mobileNumber:
+            type: string
+            example: 08711122233
+          relationshipToChild:
+            type: string
+            example: father
+          allowedToCollect:
+            type: boolean
+            example: true
+          livesWithChild:
+            type: boolean
+            example: true
+          familyId:
+            type: integer
+            format: int32
+  Staff:
+    allOf:
+      - $ref: '#/definitions/Person'
+      - type: object
+        properties:
+          group:
+            type: string
+            example: Tweenies
+          location:
+            type: string
+            example: Drummcondra
+          qualification:
+            type: string
+            example: "Level 5"
+          role:
+            type: string
+            example: "Childcard Assistant"
+  Group:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      location:
+        type: integer
+        format: int32
+      startDate:
+        type: string
+      endDate:
+        type: string
+  Location:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      creche:
+        type: integer
+        format: int32
+  Creche:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+  Person:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        example: 1234567
+      name:
+        type: string
+        example: Joe Bloggs
+      gender:
+        type: string
+        example: male
+      birthday:
+        type: string
+        example: "2010-01-20"
+      info:
+        type: object
+  GuardianList:
+    type: object
+    properties:
+      ids:
+        type: array
+        items:
+          type: integer
+          format: int32
+  ChildSchedule:
+    type: object
+    properties:
+      childId:
+        type: integer
+        format: int32
+      schedules:
+        type: array
+        items:
+          $ref: '#/definitions/Schedule'
+  Schedule:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      startDate:
+        type: string
+      endDate:
+        type: string
+      data:
+        type: object
+  ChildCalculations:
+    type: object
+    properties:
+      time:
+        type: string
+      childrenPresent:
+        type: number
+        format: float
+      staffRequired:
+        type: number
+        format: float
+      staffRequiredWhole:
+        type: number
+        format: float
+      staffAllocated:
+        type: number
+        format: float
+  ScheduleAndFees:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        example: 1
+      name:
+        type: string
+        example: "Full Day care (< 1 Yr) - 5 Days"
+      ageGroup:
+        type: string
+        example: "Under 1 Yr"
+      time:
+        type: string
+        example: "7.30am to 6.15pm"
+      code:
+        type: string
+        example: "F"
+      monthlyFee:
+        type: number
+        example: 900.00
+      hourlyRate:
+        type: number
+        example: 6.50
+      weeklyFee:
+        type: number
+        example: 0.00
+      otherFee:
+        type: number
+        example: 0.00
+      otherFrequency:
+        type: string
+        example: "N/A"
+      startTime:
+        type: string
+        example: "07:30"
+      endTime:
+        type: string
+        example: "18:15"
+      days:
+        type: integer
+        format: int32
+        example: 5
+  Shift:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      staffId:
+        type: integer
+        format: int32
+      locationId:
+        type: integer
+        format: int32
+      groupId:
+        type: integer
+        format: int32
+      commonlyUsed:
+        type: boolean
+      startTime:
+        type: string
+      break1Start:
+        type: string
+      break1Finish:
+        type: string
+      break1Duration:
+        type: string
+      break1Paid:
+        type: boolean
+      lunchStart:
+        type: string
+      lunchFinish:
+        type: string
+      lunch:
+        type: string
+      lunchPaid:
+        type: boolean
+      break2Start:
+        type: string
+      break2Finish:
+        type: string
+      break2Duration:
+        type: string
+      break2Paid:
+        type: boolean
+      finishTime:
+        type: string
+      comments:
+        type: string
+      date:
+        type: string
+      updatedTime:
+        type: string
+      checked:
+        type: boolean
+      initials:
+        type: string
+  WorkedShift:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      staffId:
+        type: integer
+        format: int32
+      locationId:
+        type: integer
+        format: int32
+      commonlyUsed:
+        type: boolean
+      startTime:
+        type: string
+      finishTime:
+        type: string
+      comments:
+        type: string
+      date:
+        type: string
+      updatedTime:
+        type: string
+      checked:
+        type: boolean
+      initials:
+        type: string
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+        example: 403
+      message:
+        type: string
+        example: "User Not authorized"
+  Supplier:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      referenceCode:
+        type: string
+  Transaction:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      uuid:
+        type: string
+      type:
+        type: string
+      bankAccount:
+        type: string
+      lodgementNo:
+        type: string
+      lodgementDate:
+        type: string
+      date:
+        type: string
+      paymentType:
+        type: string
+      supplier:
+        type: string
+      refNo:
+        type: string
+      customer:
+        type: string
+      notes:
+        type: string
+      credit:
+        type: number
+      debit:
+        type: number
+      balance:
+        type: number
+      currency:
+        type: string
+      vatCode:
+        type: string
+      category:
+        type: string
+      subCategory:
+        type: string
+      fileUrl:
+        type: string
+  Invoice:
+    type: object
+    properties:
+      id:
+        type: integer
+      paid:
+        type: boolean
+      amount:
+        type: number
+      dueDate:
+        type: string
+      createDate:
+        type: string
+      customer:
+        type: string
+      items:
+        type: object
+  LocationMessage:
+    type: object
+    properties:
+      id:
+        type: integer
+      locationId:
+        type: integer
+      name:
+        type: string
+      message:
+        type: string
+  School:
+    type: object
+    properties:
+      id:
+        type: integer
+      locationId:
+        type: integer
+      name:
+        type: string
+      address:
+        type: string
+  GroupCapacity:
+    type: object
+    properties:
+      totalMorning:
+        type: number
+        format: float
+      totalAfternoon:
+        type: number
+        format: float
+      totalRoom:
+        type: number
+        format: float
+      excessCapacityMorning:
+        type: number
+        format: float
+      excessCapacityAfternoon:
+        type: number
+        format: float
+  ChildClassData:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      childId:
+        type: integer
+        format: int64
+      time:
+        type: string
+      type:
+        type: string
+      staffId:
+        type: integer
+        format: int64
+      groupId:
+        type: integer
+        format: int32
+      data:
+        type: object
+  Observation:
+    type: object
+    required:
+      - staffId
+      - data
+    properties:
+      id:
+        type: integer
+        format: int64
+      time:
+        type: string
+      staffId:
+        type: integer
+        format: int64
+      childId:
+        type: integer
+        format: int64
+      groupId:
+        type: integer
+        format: int32
+      tags:
+        type: array
+        items:
+          type: integer
+          format: int32
+      data:
+        type: object
+  Tag:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      title:
+        type: string
+      description:
+        type: string
+  AistearFramework:
+    type: object
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+      themes:
+        type: array
+        items:
+          $ref: '#/definitions/Theme'
+  Theme:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      title:
+        type: string
+      description:
+        type: string
+      aims:
+        type: array
+        items:
+          $ref: '#/definitions/Aim'
+  Aim:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      title:
+        type: string
+      description:
+        type: string
+      tags:
+        type: array
+        items:
+          $ref: '#/definitions/Tag'
+externalDocs:
+  description: Find out more about Vivos
+  url: "https://www.vivos.me"
